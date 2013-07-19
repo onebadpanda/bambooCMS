@@ -1,18 +1,24 @@
 __author__ = 'One Bad Panda'
 import base64
 import hashlib
+import logging
 import random
+import re
 from dateutil import tz
+from markdown import markdown
+from flask import Markup
 from flask import flash, render_template, redirect, request, session, url_for
 from flask.ext.login import current_user, login_user, login_required, logout_user
 from sqlalchemy import func
 from obp import app, db, mail
 from obp.constants import post as post_status
 from obp.forms.standard import RegisterForm, LoginForm
-from obp.helpers import send_mail, tweets
+from obp.helpers import send_mail
+from obp.helpers import tweets
 from obp.models.User import User
 from obp.models.Post import Post
 from obp.models.Category import Category
+
 
 
 from_zone = tz.gettz('UTC')
@@ -30,9 +36,24 @@ def get_activation_hash():
 
 @app.template_filter('markdown')
 def markdown_filter(data):
-    from flask import Markup
-    from markdown import markdown
     return Markup(markdown(data))
+
+@app.template_filter()
+def twitterize(value):
+    """Turn twitter names and hashtags into clickable links."""
+
+    name_regex = r'(@(\w+))'
+    name_html = r' <a href="https://twitter.com/\2">\1</a>'
+    hash_regex = r'(#(\w+))'
+    hash_html = r' <a href="https://twitter.com/#search?q=\2">\1</a>'
+
+    try:
+        value = re.sub(name_regex, name_html, value)
+        value = re.sub(hash_regex, hash_html, value)
+        return Markup(value)
+
+    except Exception, ex:
+        logging.error('twitterize: %s' % ex)
 
 
 @app.route('/')
