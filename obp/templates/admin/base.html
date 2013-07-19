@@ -1,0 +1,51 @@
+{% extends "bootstrap_responsive.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block head %}
+    {{ super() }}
+    <script type='text/javascript'>
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove();
+    });
+}, 2000);
+    </script>
+{% endblock %}
+{% block style -%}
+    {{super()}}
+    <link rel="stylesheet" href={{ url_for('static', filename='css/obp-admin.css') }}>
+{%- endblock style %}
+
+{%- block style_navbar_padding %}
+    <style>
+      body {
+        padding-top: 0;
+      }
+    </style>
+{%- endblock style_navbar_padding %}
+
+{% block body %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert{{ ' alert-%s' % category if category != 'message' else '' }}" data-animation="true">
+          <button type=button class=close data-dismiss="alert">&times;</button>
+          {{ message }}
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {{ super() }}
+    <div class="container">
+        <header>
+            {% include 'admin/nav.html' %}
+        </header>
+
+        {% block body_content %}
+        {% endblock %}
+
+        <footer>
+            {% include 'admin/footer.html' %}
+        </footer>
+    </div>
+{% endblock body%}

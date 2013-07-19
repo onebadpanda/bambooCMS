@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+{% block body_content %}
+    <div class="row-fluid content">
+
+        <div class="span9">
+            <div class="span8 main pull-right">
+                <div class="span12">
+                    <h4>Please register:</h4>
+                    <form class="form form-inline" method="POST" action=".">
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_errors(form, "only") }}
+                        {{ form.csrf_token }}
+                        {{ wtf.horizontal_field(form.first_name) }}
+                        {{ wtf.horizontal_field(form.last_name) }}
+                        {{ wtf.horizontal_field(form.username) }}
+                        {{ wtf.horizontal_field(form.email) }}
+                        {{ wtf.horizontal_field(form.password) }}
+                        {{ wtf.horizontal_field(form.confirm) }}
+                        I accept the TOS {{(form.accept_tos) }}
+                        {{ form.recaptcha }}
+                        <div>
+                            <button name="action_submit" type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            {% include 'sidebar-left.html' %}
+        </div>
+
+        {% include 'sidebar-right.html' %}
+
+    </div>
+{% endblock %}

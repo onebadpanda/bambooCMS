@@ -1,0 +1,20 @@
+{% extends 'admin/base.html' %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+{% block body_content %}
+
+    <div class="row-fluid content">
+        <div class="span12">
+            <h1>{{ action }} {{ data_type }}</h1>
+            <form action="{{ form_action }}" method="{{ method | d("POST") }}" class="form form-horizontal" id="admin_form">
+            {{ wtf.render_form(form) }}
+                <div class="form_button">
+                    <button name="action_submit" type="submit" class="btn btn-primary">{{ button_text }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+{% endblock %}

@@ -1,0 +1,17 @@
+<div class="span3 right-sidebar">
+    <h4>meta</h4>
+    <h5><a data-toggle="collapse" data-target="#tweets"><i class="icon-plus btn visible-phone visible-tablet"></i></a> recent tweets:</h5>
+    <div id="tweets" class="nav-collapse collapse tweets">
+        {% if tweets %}
+            <ul class="icons-ul">
+                {% for tweet in tweets %}
+                    <li><i class="icon-twitter"></i> {{ tweet.text }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                sorry, no tweets
+            </p>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,31 @@
+{% block nav %}
+{% set STAFF = 1%}
+<div class="row-fluid">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target="#nav-links">
+                    <span class="icon-white icon-plus icon-2x"></span>
+                </a>
+                <a href="/" class="brand"><img src="{{ url_for('static', filename='img/obp.png')}}" width="40px"></a>
+                <div class="nav-collapse collapse" id="nav-links">
+                    <ul class="nav">
+                        <li {% if active=='blog' %}class="active"{% endif %}><a href="/">blog</a></li>
+                        <li {% if active=='projects' %}class="active"{% endif %}><a href="/projects">projects</a></li>
+                        {% if current_user.is_anonymous() %}<li><a href="/login/">login</a></li>{% endif %}
+                        {% if current_user.is_authenticated() %}
+                            <li class="divider-vertical"></li>
+                            <li class='pull-right'><a href="">Hi {{ current_user.username }}</a></li>
+                            {% if current_user.role<=STAFF %}<li><a href="/admin/">admin</a></li>{% endif %}
+                            <li class='pull-right'><a href='/logout'>logout</a></li>
+                        {% endif %}
+                    </ul>
+                    <form class="navbar-search pull-right">
+                        <input type="text" class="search-query" placeholder="Search">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

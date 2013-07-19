@@ -1,0 +1,310 @@
+
+.navbar{
+    margin-bottom: 0;
+}
+
+.navbar-inner, .navbar .btn-navbar{
+    background-color: #3498db;
+    background-image: none;
+    background-repeat: no-repeat;
+    filter: none;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border:none;
+}
+
+.navbar .divider-vertical {
+    background-color: #ecf0f1;
+}
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+    background-color: #2980b9;
+}
+
+.navbar .nav > li > a {
+    vertical-align: middle;
+    padding: 10px 10px 10px;
+    color: #ecf0f1;
+    text-shadow: none;
+}
+
+.navbar-fixed-top .brand {
+    color: #ecf0f1;
+    color: #ecf0f1;
+}
+
+.navbar .brand {
+    color: #323232;
+    text-shadow: none;
+    overflow: visible;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar .brand img{
+    padding-left: 30px;
+    max-height: 96px;
+}
+.navbar .nav > li > a:hover {color:#ecf0f1;}
+.navbar .nav .active > a, .navbar .nav .active > a:hover {color:#ecf0f1;}
+
+.nav-collapse .nav > li > a:hover,
+.nav-collapse .nav > li > a:focus,
+.nav-collapse .dropdown-menu a:hover,
+.nav-collapse .dropdown-menu a:focus {
+    background-color: #2980b9;
+}
+
+.navbar .btn-navbar:hover,
+.navbar .btn-navbar:focus,
+.navbar .btn-navbar:active,
+.navbar .btn-navbar.active,
+.navbar .btn-navbar.disabled,
+.navbar .btn-navbar[disabled] {
+    color: #ecf0f1;
+    background-color: #2980b9;
+    *background-color: #d9d9d9;
+}
+
+.navbar .btn-navbar .icon-plus {
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 26px;
+    height: 26px;
+    background-color: #3498db;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    color: #ecf0f1;
+}
+
+
+.content{
+    background-color: #ecf0f1;
+
+
+}
+
+.icons-ul{
+    margin-left:0;
+}
+footer .follow{
+    background-color: #212121;
+    color: #ecf0f1;
+    text-align: center;
+    height: 48px;
+}
+
+footer .icon-plus{
+    color: #2980b9;
+}
+
+footer .about{
+    padding-top: 10px;
+    background-color: #323232;
+    color: #ecf0f1;
+    padding-bottom:10px;
+}
+
+footer .bio {
+    padding-left: 30px;
+}
+
+footer .tweets{
+    padding-left: 20px;
+}
+
+footer .track{
+    padding-left: 20px;
+}
+footer .bottom{
+    background-color: #555555;
+    min-height: 48px;
+    text-align: center;
+    color: #ecf0f1;
+    padding-top: 5px;
+    padding-bottom: 10px;
+
+}
+
+footer li{
+    padding-bottom:5px;
+    padding-top:5px;
+}
+
+.icons-ul li{
+    padding-right:20px;
+    list-style: none;
+}
+
+.left-sidebar{
+    padding-left:10px;
+}
+.main{
+    padding-left:20px;
+}
+.right-sidebar{
+    padding-left:20px;
+    padding-right: 20px;
+}
+
+.right-sidebar li{
+    padding-bottom:5px;
+    padding-top:5px;
+}
+
+label{
+    margin-top: 15px;
+}
+
+h1{
+    padding-left:20px;
+}
+
+#admin_form{
+    padding-left:20px;
+    padding-right: 20px;
+}
+
+td.actions, th.actions{
+    text-align: center;
+}
+
+td.multi-action{
+    text-align: center;
+}
+
+button#submit{
+    margin-left:15px;
+    display: inline-block;
+    padding:0;
+}
+
+.alert{
+    margin-bottom:0;
+}
+
+form{
+    margin-top:20px;
+}
+
+.form_button{
+    padding-top:20px;
+}
+
+td .dropdown-menu {
+    min-width: 0;
+}
+
+select{
+    width: auto;
+    min-width: 200px;
+    float:left;
+}
+
+.go{
+    margin-left: 5px;
+}
+
+.inactive_user{
+    color:#bbbbbb;
+}
+
+.banned_user{
+    color:#771F1F
+}
+
+.box {
+    display:block;
+    width:200px;
+    height:24px;
+}
+.popover-content {
+    padding:0px 0px;
+}
+.post_tools {
+    position:relative;
+}
+
+@media (min-width: 320px) and (max-width: 767px){
+    body{
+        padding:0;
+    }
+    .navbar .brand img{
+        padding-left: 30px;
+        padding-top: 5px;
+        height:54px;
+        width: 54px;
+    }
+    .container{
+        width: 100%;
+
+    }
+
+    .left-sidebar{
+        padding-left: 20px;
+        padding-bottom: 10px;
+    }
+
+    .main{
+        padding-bottom: 10px;
+    }
+    .right-sidebar{
+        padding-bottom: 10px;
+    }
+    footer .bio {
+        padding-left: 20px;
+    }
+
+    input{
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    label{
+        margin-top: 5px;
+    }
+
+    .nav-collapse .nav>li>a,.nav-collapse .dropdown-menu a{
+        color:#ecf0f1;
+    }
+
+    button#submit{
+        margin-left:5px;
+    }
+
+    td .dropdown-menu {
+        min-width: 0;
+    }
+
+    #user_form{
+    margin-left:10px;
+    margin-right:10px;
+    }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+    body{
+        padding: 0;
+    }
+    .navbar .brand img{
+        padding-left: 50px;
+        padding-top: 5px;
+        height:54px;
+        width: 54px;
+    }
+    .container{
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    button#submit{
+        margin-left:10px;
+    }
+
+}

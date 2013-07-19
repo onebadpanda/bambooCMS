@@ -1,0 +1,7 @@
+<div class="span3 left-sidebar pull-left">
+    <h4>topics</h4>
+    {% for cat in categories %}
+        <a href="/category/{{ cat.name }}">{{ cat.name }}</a><br>
+    {% endfor %}
+    <h4>tags</h4>
+</div>

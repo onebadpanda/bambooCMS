@@ -1,0 +1,49 @@
+{% block footer %}
+<footer>
+    <div class="row-fluid follow">
+    </div>
+
+    <div class="row-fluid about">
+
+        <div class="span3 bio">
+            <h5><a data-toggle="collapse" data-target="#about"><i class="icon-plus btn visible-phone visible-tablet"></i></a> about:</h5>
+            <div id="about" class="nav-collapse collapse">
+                A panda, a bad bad bad panda. He's pretty lovable though!
+            </div>
+        </div>
+
+        <div class="span6 tweets">
+            <h5><a data-toggle="collapse" data-target="#mentions"><i class="icon-plus btn visible-phone visible-tablet"></i></a> who's talking about the panda:</h5>
+            <div id="mentions" class="nav-collapse collapse">
+                {% if mentions %}
+                    <ul class="icons-ul">
+                        {% for mention in mentions %}
+                            <li><i class="icon-twitter"></i> {{ mention.text }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No one is talking about the panda :(</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="span3 track">
+            <h5><a data-toggle="collapse" data-target="#track"><i class="icon-plus btn visible-phone visible-tablet"></i></a> track the panda</h5>
+            <ul id="track" class="icons-ul nav-collapse collapse">
+                <li><i class="icon-twitter"></i> <a href="https://twitter.com/one_bad_panda">twitter</a></li>
+                <li><i class="icon-stackexchange"></i> <a href="http://stackoverflow.com/users/2512551/one-bad-panda">stack-overflow</a></li>
+                <li><i class="icon-github"></i><a href="https://github.com/onebadpanda"> github</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row-fluid bottom">
+        copyright &copy; 2013 onebadpanda.com<br/>
+        <a href="http://flask.pocoo.org/">
+            <img src="http://flask.pocoo.org/static/badges/made-with-flask-s.png"
+                 border="0"
+                 alt="made with Flask"
+                 title="made with Flask">
+        </a>
+    </div>
+</footer>
+{% endblock %}
