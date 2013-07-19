@@ -7,8 +7,12 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     create_date = db.Column(db.DateTime)
     body = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
-    def __init__(self, create_date=None, body=None):
+    def __init__(self, user_id, post_id, create_date=None, body=None):
+        self.user_id = user_id
+        self.post_id = post_id
         if create_date is None:
             self.body = datetime.utcnow()
         self.body = body

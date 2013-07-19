@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     status = db.Column(db.SmallInteger, default=USER.NEW)
     activation_hash = db.Column(db.String)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     def __init__(self, first_name=None, last_name=None, username=None, email=None, password=None,
                  role=USER.USER, status=USER.NEW, activation_hash=None):

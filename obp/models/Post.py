@@ -14,6 +14,8 @@ class Post(db.Model):
     status = db.Column(db.SmallInteger)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
+
 
     def __init__(self, user_id, title, body, category_id, create_date=None, pub_date=None, status=None):
         self.user_id = user_id
