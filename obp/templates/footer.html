@@ -18,7 +18,7 @@
                 {% if mentions %}
                     <ul class="icons-ul">
                         {% for mention in mentions %}
-                            <li><i class="icon-twitter"></i> {{ mention.text }}</li>
+                            <li><i class="icon-twitter"></i> {{ mention.text|twitterize|urlize }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}

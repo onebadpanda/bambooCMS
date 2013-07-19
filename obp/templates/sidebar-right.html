@@ -5,7 +5,7 @@
         {% if tweets %}
             <ul class="icons-ul">
                 {% for tweet in tweets %}
-                    <li><i class="icon-twitter"></i> {{ tweet.text }}</li>
+                    <li><i class="icon-twitter"></i> {{ tweet.text|twitterize|urlize|safe }}</li>
                 {% endfor %}
             </ul>
         {% else %}
