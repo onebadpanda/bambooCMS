@@ -279,7 +279,6 @@ def post_edit(post_id):
             post.pub_date = datetime.utcnow()
         db.session.commit()
         flash("Post: \"%s\"  updated" % post.title, category="success")
-        #return redirect(url_for('admin.user_edit',user_id=user.id))
         return redirect(url_for('admin.post_index'))
     return render_template('admin/edit.html',
                            form=form,
