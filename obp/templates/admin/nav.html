@@ -12,7 +12,7 @@
                     <div class="nav-collapse collapse" id="nav-links">
                         <ul class="nav">
                             <li class="dropdown">
-                                <a id="posts" href="{{ url_for('admin.post_index') }}" role="button" class="dropdown-toggle"
+                                <a id="posts" href="" role="button" class="dropdown-toggle"
                                    data-toggle="dropdown">posts <b class="caret"></b></a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.post_index') }}">View Posts</a></li>
@@ -21,7 +21,7 @@
                             </li>
                             {% if current_user.role<=ADMIN%}
                             <li class="dropdown">
-                                <a id="users" href="{{ url_for('admin.user_index') }}" role="button" class="dropdown-toggle"
+                                <a id="users" href="" role="button" class="dropdown-toggle"
                                    data-toggle="dropdown">users <b class="caret"></b></a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.user_index') }}">View Users</a></li>
