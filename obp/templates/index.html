@@ -9,7 +9,7 @@
                 {% if posts %}
                     {% for post in posts %}
                         <div class="post">
-                            <h4>{{ post.title }}</h4>
+                            <h4><a href="{{ url_for('individual_post', post_id=post.id)}}">{{ post.title }}</a></h4>
                             {% if not current_user.is_anonymous() %}
                                 {% if current_user.role == 0 or (current_user.role == 1 and
                                 current_user.username == post.author.username) %}
@@ -22,10 +22,6 @@
                                 <h6>by: {{ post.author.first_name }}</h6>
                             {% endif %}
                                 {{ post.body | markdown }}
-                            {% if current_user.is_authenticated() %}
-                                comments are coming soon
-                            {% else %}<a href="/login">comment</a>
-                            {% endif %}
                         </div>
                     {% endfor %}
                 {% else %}
