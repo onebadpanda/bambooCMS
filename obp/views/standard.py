@@ -4,6 +4,7 @@ import hashlib
 import logging
 import random
 import re
+from datetime import datetime
 from dateutil import tz
 from markdown import markdown
 from flask import Markup
@@ -12,12 +13,13 @@ from flask.ext.login import current_user, login_user, login_required, logout_use
 from sqlalchemy import func
 from obp import app, db, mail
 from obp.constants import post as post_status
-from obp.forms.standard import RegisterForm, LoginForm
+from obp.forms.standard import RegisterForm, LoginForm, CommentForm
 from obp.helpers import send_mail
 from obp.helpers import tweets
 from obp.models.User import User
 from obp.models.Post import Post
 from obp.models.Category import Category
+from obp.models.Comment import Comment
 
 
 
@@ -38,7 +40,7 @@ def get_activation_hash():
 def markdown_filter(data):
     return Markup(markdown(data))
 
-@app.template_filter()
+@app.template_filter('twitterize')
 def twitterize(value):
     """Turn twitter names and hashtags into clickable links."""
 
@@ -160,3 +162,33 @@ def logout():
     logout_user()
     flash('You have logged out!')
     return redirect(url_for('index'))
+
+
+@app.route('/post/<int:post_id>/', methods=["GET", "POST"])
+def individual_post(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    form = CommentForm()
+    comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.id.asc()).all()
+
+    if form.validate_on_submit() and current_user.is_authenticated():
+        new_comment = Comment(user_id=current_user.id,
+                              post_id=post_id,
+                              create_date=datetime.utcnow(),
+                              body=form.body.data,
+                              )
+        db.session.add(new_comment)
+        db.session.commit()
+
+        flash("Your comment has been added", category="success")
+        return redirect(url_for('individual_post', post_id=post_id))
+    for comment in comments:
+        comment.create_date = comment.create_date.replace(tzinfo=from_zone).astimezone(to_zone)
+
+    return render_template('post.html',
+                           tweets=myTweets,
+                           mentions=myMentions,
+                           form=form,
+                           post=post,
+                           comments=comments,
+                           button_text="Save",
+                           )
