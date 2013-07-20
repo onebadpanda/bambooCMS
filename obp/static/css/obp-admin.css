@@ -231,6 +231,10 @@ select{
     position:relative;
 }
 
+.dropdown-backdrop {
+    position: static;
+}
+
 @media (min-width: 320px) and (max-width: 767px){
     body{
         padding:0;
@@ -280,6 +284,10 @@ select{
 
     td .dropdown-menu {
         min-width: 0;
+    }
+
+    .dropdown-backdrop {
+    position: static;
     }
 
     #user_form{
