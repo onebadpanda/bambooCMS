@@ -14,7 +14,8 @@ class Comment(db.Model):
         self.user_id = user_id
         self.post_id = post_id
         if create_date is None:
-            self.body = datetime.utcnow()
+            create_date = datetime.utcnow()
+        self.create_date = create_date
         self.body = body
         #TODO figure out relationships needed for this class
         #TODO one->many relationship post->comment
