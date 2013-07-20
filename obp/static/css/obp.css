@@ -192,6 +192,7 @@ input#recaptcha_response_field{ height: auto; float: none; line-height: 1;}
 
     .main{
         padding-bottom: 10px;
+        padding-right: 20px;
     }
     .right-sidebar{
         padding-bottom: 10px;
