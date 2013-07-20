@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+
+{% block body_content %}
+    <div class="row-fluid content">
+
+        <div class="span9">
+            <div class="span8 main pull-right">
+                <h3>latest words...</h3>
+                {% if post %}
+                    <div class="post">
+                        <h4>{{ post.title }}</h4>
+                        {% if post.pub_date %}
+                            <h5>published on {{ post.pub_date.strftime('%A, %B %d') }} at
+                                {{ post.pub_date.strftime('%I:%M %p %Z') }}</h5>
+                        {% endif %}
+                        <h6>by: {{ post.author.first_name }}</h6>
+                        {{ post.body | markdown }}
+                    </div>
+                    <div>
+                    <h5>Recent Comments:</h5>
+                        {% if comments %}
+                            {% for comment in comments %}
+                                by: {{ comment.author.username }}<br/>
+                                {{ comment.create_date.strftime('%A, %B %d at %I:%M %p %Z') }}
+                                {{ comment.body|markdown }}
+                            {% endfor %}
+                        {% else %}
+                            No comments
+                        {% endif %}
+                    </div>
+                    <div>
+                    <h5>Add a comment</h5>
+                        {% if current_user.is_authenticated() %}
+                            <form action="{{ form_action }}" method="{{ method | d("POST") }}" class="form form-horizontal" id="admin_form">
+                                {{ wtf.render_form(form) }}
+                                <div class="form_button">
+                                    <button name="action_submit" type="submit" class="btn btn-primary">{{ button_text }}</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <em>sorry... I've not written anything... :(</em>
+                {% endif %}
+            </div>
+
+            {% include 'sidebar-left.html' %}
+        </div>
+
+        {% include 'sidebar-right.html' %}
+
+    </div>
+{% endblock %}
+
