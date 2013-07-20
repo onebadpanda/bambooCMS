@@ -1,6 +1,6 @@
 __author__ = 'One Bad Panda'
 from flask.ext.wtf import Form, RecaptchaField
-from wtforms import TextField, BooleanField
+from wtforms import TextField, BooleanField, TextAreaField
 from wtforms.validators import Required, EqualTo, Email, DataRequired
 from wtforms.fields import PasswordField
 
@@ -21,3 +21,6 @@ class LoginForm(Form):
     username = TextField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember me', default=False)
+
+class CommentForm(Form):
+    body = TextAreaField('Comments:', validators=[DataRequired()])
