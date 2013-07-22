@@ -35,6 +35,10 @@ def get_activation_hash():
                               random.choice(['rA', 'aZ', 'gQ', 'hH', 'hG', 'aR', 'DD'])).rstrip('==')
     return result
 
+def readMore(string, length, fill=' ...'):
+    from textwrap import wrap
+    return [s + fill for s in wrap(string, length - len(fill))]
+
 
 @app.template_filter('markdown')
 def markdown_filter(data):
@@ -56,6 +60,11 @@ def twitterize(value):
 
     except Exception, ex:
         logging.error('twitterize: %s' % ex)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html', error=404)
 
 
 @app.route('/')
@@ -169,6 +178,8 @@ def individual_post(post_id):
     post = Post.query.filter_by(id=post_id).first_or_404()
     form = CommentForm()
     comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.id.asc()).all()
+    categories = Category.query.order_by(Category.name).all()
+
 
     if form.validate_on_submit() and current_user.is_authenticated():
         new_comment = Comment(user_id=current_user.id,
@@ -189,6 +200,22 @@ def individual_post(post_id):
                            mentions=myMentions,
                            form=form,
                            post=post,
+                           categories=categories,
                            comments=comments,
                            button_text="Save",
+                           )
+
+
+@app.route('/category/<int:category_id>')
+def category_index(category_id):
+    posts = Post.query.filter_by(category_id=category_id).all()
+    category = Category.query.filter_by(id=category_id).first_or_404()
+    categories = Category.query.order_by(Category.name).all()
+
+    return render_template('category.html',
+                           tweets=myTweets,
+                           mentions=myMentions,
+                           posts=posts,
+                           category=category,
+                           categories=categories
                            )
