@@ -170,6 +170,12 @@ input#recaptcha_response_field{ height: auto; float: none; line-height: 1;}
     padding-bottom: 30px;
 }
 
+.errorPage{
+    font-size:48px;
+    line-height: 64px;
+    font-style: oblique;
+}
+
 @media (min-width: 320px) and (max-width: 767px){
     body{
         padding:0;
