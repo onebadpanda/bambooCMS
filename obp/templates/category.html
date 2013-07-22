@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+
+{% block body_content %}
+    <div class="row-fluid content">
+
+        <div class="span9">
+            <div class="span8 main pull-right">
+                <h3>All posts in "{{ category.name }}"</h3>
+                {% if posts %}
+                    {% for post in posts %}
+                        <h4><a href="{{ url_for('individual_post', post_id=post.id)}}">{{ post.title }}</a></h4>
+                        <h5>
+                            by: {{ post.author.first_name }}
+                        </h5>
+                        <h5>published on {{ post.pub_date.strftime('%A, %B %d') }} at
+                                    {{ post.pub_date.strftime('%I:%M %p %Z') }}</h5>
+                        {{ post.body|markdown }}
+                    {% endfor %}
+                {% else %}
+                    There are not posts in {{ category.name }}.
+                {% endif %}
+            </div>
+
+            {% include 'sidebar-left.html' %}
+        </div>
+
+        {% include 'sidebar-right.html' %}
+
+    </div>
+{% endblock %}
+
