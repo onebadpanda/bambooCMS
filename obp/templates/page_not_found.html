@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% import 'bootstrap_wtf.html' as wtf %}
+
+
+{% block body_content %}
+    <div class="row-fluid content">
+
+        <div class="span12">
+                {% if error==404 %}
+                <div class="text-center">
+                    <img src="{{ url_for('static', filename='img/obp.png') }}"><br/>
+                    <div class="errorPage">
+                        <p>4-oh-4</p>
+                        <p>
+                            Sorry, we can't find what you're looking for
+                        </p>
+
+                    </div>
+                </div>
+                {% endif %}
+
+        </div>
+
+
+    </div>
+{% endblock %}
+
