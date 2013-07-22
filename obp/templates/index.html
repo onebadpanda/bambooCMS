@@ -13,14 +13,17 @@
                             {% if not current_user.is_anonymous() %}
                                 {% if current_user.role == 0 or (current_user.role == 1 and
                                 current_user.username == post.author.username) %}
-                                    <a href='/admin/posts/edit/{{ post.id }}'>edit</a>
+                                    <a href="{{ url_for('admin.post_edit', post_id=post.id) }}">edit</a>
                                 {% endif %}
                             {% endif %}
-                            {% if post.pub_date %}
                                 <h5>published on {{ post.pub_date.strftime('%A, %B %d') }} at
                                     {{ post.pub_date.strftime('%I:%M %p %Z') }}</h5>
-                                <h6>by: {{ post.author.first_name }}</h6>
-                            {% endif %}
+                                <h6>
+                                    by: {{ post.author.first_name }} in
+                                    <a href="{{ url_for('category_index', category_id=post.category.id) }}">
+                                        {{ post.category.name }}
+                                    </a>
+                                </h6>
                                 {{ post.body | markdown }}
                         </div>
                     {% endfor %}
