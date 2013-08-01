@@ -28,8 +28,12 @@
                             <td class="hidden-phone">{{ post.author.username }}</td>
                             <td>{{ post_status[post.status] }}</td>
                             <td class="hidden-phone">{{ post.category.name }}</td>
-                            <td class="hidden-phone">{{ post.tags }}</td>
-                            <td class="hidden-phone">{{ post.comments.id }}</td>
+                            <td class="hidden-phone">
+                                {% for tag in post.tags %}
+                                    {{ tag.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="hidden-phone">{{ post.comments.count() }}</td>
                             <td class="actions">
 
                                 <div class="btn-group">

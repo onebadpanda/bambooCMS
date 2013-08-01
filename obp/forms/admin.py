@@ -1,5 +1,5 @@
 __author__ = 'One Bad Panda'
-from flask.ext.wtf import Form, TextField, TextAreaField, PasswordField, SelectField
+from flask.ext.wtf import ListWidget, CheckboxInput,  Form, TextField, TextAreaField, PasswordField, SelectField, SelectMultipleField
 from wtforms.validators import Required, Email
 from wtforms.widgets import Select
 from obp.constants.user import ROLE as USER_ROLE
@@ -23,6 +23,10 @@ class ChoicesSelect(Select):
         return super(ChoicesSelect, self).__call__(field, **kwargs)
 
 
+class MultiCheckboxField(SelectMultipleField):
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
+
 def categories():
     return Category.query.with_entities(Category.id, Category.name).order_by(Category.name).all()
 
@@ -38,38 +42,33 @@ def tags():
 def posts():
     return Post.query.with_entities(Post.id, Post.title).order_by(Post.pub_date).all()
 
-
-class UserNew(Form):
+class UserForm(Form):
     first_name = TextField('first name', [Required()])
     last_name = TextField('last name', [Required()])
     username = TextField('user name', [Required()])
     email = TextField('email address', [Required(), Email()])
+    role = SelectField('role', choices=USER_ROLE.items(), coerce=int)
+    status = SelectField('status', choices=USER_STATUS.items(), coerce=int)
+
+
+class UserNew(UserForm):
     password = PasswordField('password', [Required()])
-    role = SelectField('role', choices=USER_ROLE.items(), coerce=int)
-    status = SelectField('status', choices=USER_STATUS.items(), coerce=int)
 
 
-class UserEdit(Form):
-    first_name = TextField('first name', [Required()])
-    last_name = TextField('last name', [Required()])
-    username = TextField('user name', [Required()])
-    email = TextField('email address', [Required(), Email()])
-    role = SelectField('role', choices=USER_ROLE.items(), coerce=int)
-    status = SelectField('status', choices=USER_STATUS.items(), coerce=int)
+class UserEdit(UserForm):
+    pass
 
-
-class PostNew(Form):
+class PostForm(Form):
     title = TextField('title', [Required()])
     body = TextAreaField('body', [Required()])
     category_id = SelectField('category', choices=categories(), coerce=int)
-    #tags = SelectField('tags', choices=tags().items(),coerce=int)
+
+class PostNew(PostForm):
+    tags = MultiCheckboxField(choices=tags(),coerce=int)
     status = SelectField('status', choices=POST_STATUS.items(), coerce=int)
 
 
-class PostEdit(Form):
-    title = TextField('title', [Required()])
-    body = TextAreaField('body', [Required()])
-    category_id = SelectField('category', choices=categories(), coerce=int)
+class PostEdit(PostForm):
     user_id = SelectField('author', choices=users(), coerce=int)
     #tags = SelectField('tags', choices=tags().items(),coerce=int)
     status = SelectField('status', choices=POST_STATUS.items(), coerce=int)

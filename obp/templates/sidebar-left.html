@@ -1,7 +1,10 @@
 <div class="span3 left-sidebar pull-left">
     <h4>topics</h4>
     {% for cat in categories %}
-        <a href="{{ url_for('category_index',category_id=cat.id) }}">{{ cat.name }}</a><br>
+        <a href="{{ url_for('category_index',category_slug=cat.slug) }}">{{ cat.name }}</a><br>
     {% endfor %}
     <h4>tags</h4>
+    {% for tag in tags %}
+        <a href="{{ url_for('tag_index',tag_slug=tag.slug) }}">{{ tag.name }}</a><br/>
+    {% endfor %}
 </div>

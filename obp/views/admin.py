@@ -11,6 +11,7 @@ from obp.forms.admin import UserNew, UserEdit, PostNew, PostEdit
 from obp.helpers.decorators import admin_required
 from obp.models.User import User
 from obp.models.Post import Post
+from obp.models.Tag import Tag
 
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
@@ -253,6 +254,10 @@ def post_add():
                     create_date=datetime.utcnow(),
                     pub_date=pub_date,
                     status=form.status.data)
+        for tag in form.tags.data:
+            tag = Tag.query.filter_by(id=tag).first()
+            post.tags.append(tag)
+
         db.session.add(post)
         db.session.commit()
 
@@ -285,4 +290,121 @@ def post_edit(post_id):
                            action="Edit",
                            data_type="Post",
                            button_text="Update",
+                           )
+
+@admin.route('/category/', methods=["GET", "POST"])
+@login_required
+def category_index():
+    if current_user.role is not USER.ADMIN:
+        posts = Post.query.filter_by(user_id=current_user.id).all()
+    else:
+        posts = Post.query.all()
+    post_ids = request.form.getlist("multi-action")
+
+    if request.method == 'POST':
+        action = request.form['action']
+        for post_id in post_ids:
+            post = Post.query.filter_by(id=post_id).first()
+            if action == "delete":
+                delete_post(post.id)
+                flash("Deleted post \"%s\"" % post.title, category="success")
+            if action == "pend":
+                pend_post(post.id)
+                flash("Pended post \"%s\"" % post.title, category="success")
+            if action == "publish":
+                publish_post(post.id)
+                flash("Published post \"%s\"" % post.title, category="success")
+        return redirect(url_for('admin.post_index'))
+    return render_template('admin/post_index.html',
+                           posts=posts,
+                           post_status=POST.STATUS,
+                           categories=categories()
+                           )
+
+
+@admin.route('/category/add', methods=["GET", "POST"])
+@login_required
+def category_add():
+    form = PostNew()
+    if form.validate_on_submit():
+        if form.status.data == POST.PUBLISHED:
+            pub_date = datetime.utcnow()
+        else:
+            pub_date = None
+        post = Post(user_id=current_user.id,
+                    title=form.title.data,
+                    body=form.body.data,
+                    category_id=form.category_id.data,
+                    create_date=datetime.utcnow(),
+                    pub_date=pub_date,
+                    status=form.status.data)
+        db.session.add(post)
+        db.session.commit()
+
+        flash('Post %s added' % post.title)
+        return redirect(url_for('admin.post_index'))
+    return render_template('admin/edit.html',
+                           form=form,
+                           action="New",
+                           data_type="Post",
+                           button_text="Save",
+                           )
+
+
+@admin.route('/tags/', methods=["GET", "POST"])
+@login_required
+def tag_index():
+    if current_user.role is not USER.ADMIN:
+        posts = Post.query.filter_by(user_id=current_user.id).all()
+    else:
+        posts = Post.query.all()
+    post_ids = request.form.getlist("multi-action")
+
+    if request.method == 'POST':
+        action = request.form['action']
+        for post_id in post_ids:
+            post = Post.query.filter_by(id=post_id).first()
+            if action == "delete":
+                delete_post(post.id)
+                flash("Deleted post \"%s\"" % post.title, category="success")
+            if action == "pend":
+                pend_post(post.id)
+                flash("Pended post \"%s\"" % post.title, category="success")
+            if action == "publish":
+                publish_post(post.id)
+                flash("Published post \"%s\"" % post.title, category="success")
+        return redirect(url_for('admin.post_index'))
+    return render_template('admin/post_index.html',
+                           posts=posts,
+                           post_status=POST.STATUS,
+                           categories=categories()
+                           )
+
+
+@admin.route('/tags/add', methods=["GET", "POST"])
+@login_required
+def tag_add():
+    form = PostNew()
+    if form.validate_on_submit():
+        if form.status.data == POST.PUBLISHED:
+            pub_date = datetime.utcnow()
+        else:
+            pub_date = None
+        post = Post(user_id=current_user.id,
+                    title=form.title.data,
+                    body=form.body.data,
+                    category_id=form.category_id.data,
+                    create_date=datetime.utcnow(),
+                    pub_date=pub_date,
+                    status=form.status.data)
+        db.session.add(post)
+        db.session.commit()
+
+        flash('Post %s added' % post.title)
+        return redirect(url_for('admin.post_index'))
+    return render_template('admin/edit.html',
+                           form=form,
+                           action="New",
+                           data_type="Post",
+                           button_text="Save",
                            )

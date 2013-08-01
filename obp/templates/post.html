@@ -8,16 +8,25 @@
         <div class="span9">
             <div class="span8 main pull-right">
                 {% if post %}
-                    <div class="row post">
+                    <div class=" post">
                         <h3>{{ post.title }}</h3>
-                        {% if post.pub_date %}
-                            <h4>published on {{ post.pub_date.strftime('%A, %B %d') }} at
-                                {{ post.pub_date.strftime('%I:%M %p %Z') }}</h4>
-                        {% endif %}
-                        <h5>by: {{ post.author.first_name }}</h5>
-                        {{ post.body | markdown }}
+                            <h5>published on {{ post.pub_date.strftime('%A, %B %d') }} at
+                                {{ post.pub_date.strftime('%I:%M %p %Z') }}</h5>
+                            <h6>
+                                by: {{ post.author.first_name }} in
+                                <a href="{{ url_for('category_index', category_slug=post.category.slug) }}">
+                                    {{ post.category.name }}
+                                </a>
+                            </h6>
+                            {{ post.body | markdown }}
+                            {% if post.tags%}
+                                <h6>tagged:</h6>
+                                {% for tag in post.tags %}
+                                    <a href="{{ url_for('tag_index',tag_slug=tag.slug) }}">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            {% endif %}
                     </div>
-                    <div class="row">
+                    <div class="">
                     <h4>Recent Comments:</h4>
                         {% if comments %}
                             {% for comment in comments %}
@@ -29,15 +38,17 @@
                             No comments
                         {% endif %}
                     </div>
-                    <div class="row">
-                    <h4>Add a comment:</h4>
+                    <div class="">
                         {% if current_user.is_authenticated() %}
+                            <h4>Add a comment:</h4>
                             <form action="{{ form_action }}" method="{{ method | d("POST") }}" class="form form-horizontal"  id="admin_form">
                                 {{ wtf.render_form(form) }}
                                 <div class="form_button">
                                     <button name="action_submit" type="submit" class="btn btn-primary">{{ button_text }}</button>
                                 </div>
                             </form>
+                        {% else %}
+                            <a href="{{ url_for('login') }}">login</a> to comment
                         {% endif %}
                     </div>
                 {% else %}

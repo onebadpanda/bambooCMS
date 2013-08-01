@@ -6,7 +6,7 @@
     <div class="row-fluid content">
         <div class="span12">
             <h1>{{ action }} {{ data_type }}</h1>
-            <form action="{{ form_action }}" method="{{ method | d("POST") }}" class="form form-horizontal" id="admin_form">
+            <form action="{{ form_action }}" method="{{ method | d("POST") }}" class="form form-inline" id="admin_form">
             {{ wtf.render_form(form) }}
                 <div class="form_button">
                     <button name="action_submit" type="submit" class="btn btn-primary">{{ button_text }}</button>

@@ -11,6 +11,7 @@ from flask import Markup
 from flask import flash, render_template, redirect, request, session, url_for
 from flask.ext.login import current_user, login_user, login_required, logout_user
 from sqlalchemy import func
+from werkzeug.contrib.cache import SimpleCache
 from obp import app, db, mail
 from obp.constants import post as post_status
 from obp.forms.standard import RegisterForm, LoginForm, CommentForm
@@ -20,14 +21,12 @@ from obp.models.User import User
 from obp.models.Post import Post
 from obp.models.Category import Category
 from obp.models.Comment import Comment
-
-
+from obp.models.Tag import Tag
 
 from_zone = tz.gettz('UTC')
 to_zone = tz.tzlocal()
 
-myTweets = tweets.get_latest_tweets()
-myMentions = tweets.get_latest_mentions()
+cache = SimpleCache()
 
 
 def get_activation_hash():
@@ -35,14 +34,35 @@ def get_activation_hash():
                               random.choice(['rA', 'aZ', 'gQ', 'hH', 'hG', 'aR', 'DD'])).rstrip('==')
     return result
 
-def readMore(string, length, fill=' ...'):
-    from textwrap import wrap
-    return [s + fill for s in wrap(string, length - len(fill))]
+
+def get_all_mentions():
+    rv = cache.get('my_latest_mentions')
+    if rv is None:
+        rv = tweets.get_latest_mentions()
+        cache.set('my_latest_mentions', rv, timeout=15 * 60)
+    return rv
+
+
+def get_all_tweets():
+    rv = cache.get('my_latest_tweets')
+    if rv is None:
+        rv = tweets.get_latest_tweets()
+        cache.set('my_latest_tweets', rv, timeout=15 * 60)
+    return rv
+
+
+def get_all_categories():
+    return Category.query.order_by(Category.name).all()
+
+
+def get_all_tags():
+    return Tag.query.order_by(Tag.name).all()
 
 
 @app.template_filter('markdown')
 def markdown_filter(data):
     return Markup(markdown(data))
+
 
 @app.template_filter('twitterize')
 def twitterize(value):
@@ -67,6 +87,14 @@ def page_not_found(error):
     return render_template('page_not_found.html', error=404)
 
 
+app.jinja_env.globals.update(
+    tweets=get_all_tweets(),
+    mentions=get_all_mentions(),
+    categories=get_all_categories(),
+    tags=get_all_tags()
+)
+
+
 @app.route('/')
 def index():
     active = 'blog'
@@ -74,24 +102,13 @@ def index():
     for post in posts:
         post.create_date = post.create_date.replace(tzinfo=from_zone).astimezone(to_zone)
         post.pub_date = post.pub_date.replace(tzinfo=from_zone).astimezone(to_zone)
-    categories = Category.query.order_by(Category.name).all()
-    return render_template('index.html',
-                           active=active,
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           posts=posts,
-                           categories=categories,
-                           )
+    return render_template('index.html', active=active, posts=posts)
 
 
 @app.route('/projects/')
 def projects():
     active = 'projects'
-    return render_template('projects.html',
-                           active=active,
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           )
+    return render_template('projects.html', active=active)
 
 
 @app.route('/register/', methods=["GET", "POST"])
@@ -114,11 +131,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             return redirect(url_for('index'))
-    return render_template('register.html',
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           form=form,
-                           )
+    return render_template('register.html',form=form)
 
 
 @app.route('/activate_user/<activation_hash>')
@@ -158,11 +171,7 @@ def login():
                 flash('This username is disabled!', 'error')
         else:
             flash('Wrong username or password!', 'error')
-    return render_template('login.html',
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           form=form,
-                           )
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout/')
@@ -173,17 +182,17 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/post/<int:post_id>/', methods=["GET", "POST"])
-def individual_post(post_id):
-    post = Post.query.filter_by(id=post_id).first_or_404()
-    form = CommentForm()
-    comments = Comment.query.filter_by(post_id=post_id).order_by(Comment.id.asc()).all()
-    categories = Category.query.order_by(Category.name).all()
+@app.route('/posts/<string:post_slug>/', methods=["GET", "POST"])
+def individual_post(post_slug):
+    post = Post.query.filter_by(slug=post_slug).first_or_404()
+    post.pub_date = post.pub_date.replace(tzinfo=from_zone).astimezone(to_zone)
 
+    form = CommentForm()
+    comments = Comment.query.filter_by(post_id=post.id).order_by(Comment.id.asc()).all()
 
     if form.validate_on_submit() and current_user.is_authenticated():
         new_comment = Comment(user_id=current_user.id,
-                              post_id=post_id,
+                              post_id=post.id,
                               create_date=datetime.utcnow(),
                               body=form.body.data,
                               )
@@ -191,31 +200,24 @@ def individual_post(post_id):
         db.session.commit()
 
         flash("Your comment has been added", category="success")
-        return redirect(url_for('individual_post', post_id=post_id))
+        return redirect(url_for('individual_post', post_slug=post_slug))
     for comment in comments:
         comment.create_date = comment.create_date.replace(tzinfo=from_zone).astimezone(to_zone)
 
-    return render_template('post.html',
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           form=form,
-                           post=post,
-                           categories=categories,
-                           comments=comments,
-                           button_text="Save",
-                           )
+    return render_template('post.html', form=form, post=post, comments=comments, button_text="Save")
 
 
-@app.route('/category/<int:category_id>')
-def category_index(category_id):
-    posts = Post.query.filter_by(category_id=category_id).all()
-    category = Category.query.filter_by(id=category_id).first_or_404()
-    categories = Category.query.order_by(Category.name).all()
+@app.route('/categories/<string:category_slug>')
+def category_index(category_slug):
+    category = Category.query.filter_by(slug=category_slug).first_or_404()
+    posts = Post.query.filter_by(category_id=category.id).all()
 
-    return render_template('category.html',
-                           tweets=myTweets,
-                           mentions=myMentions,
-                           posts=posts,
-                           category=category,
-                           categories=categories
-                           )
+    return render_template('category.html', posts=posts, category=category)
+
+
+@app.route('/tagged/<string:tag_slug>')
+def tag_index(tag_slug):
+    tag = Tag.query.filter_by(slug=tag_slug).first_or_404()
+    posts = Post.query.filter(Post.tags.any(id=tag.id)).all()
+
+    return render_template('tag.html', posts=posts, tag=tag)

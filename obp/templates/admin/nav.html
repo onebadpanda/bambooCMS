@@ -19,6 +19,22 @@
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.post_add') }}">New Post</a></li>
                                 </ul>
                             </li>
+                            <li class="dropdown">
+                                <a id="categories" href="" role="button" class="dropdown-toggle"
+                                   data-toggle="dropdown">categories <b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.category_index') }}">View Categories</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.category_add') }}">New Category</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a id="tags" href="" role="button" class="dropdown-toggle"
+                                   data-toggle="dropdown">tags <b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.tag_index') }}">View Tags</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="{{ url_for('admin.tag_add') }}">New Tag</a></li>
+                                </ul>
+                            </li>
                             {% if current_user.role<=ADMIN%}
                             <li class="dropdown">
                                 <a id="users" href="" role="button" class="dropdown-toggle"

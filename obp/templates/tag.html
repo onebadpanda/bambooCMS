@@ -6,7 +6,7 @@
     <div class="row-fluid content">
         <div class="span9">
             <div class="span8 main pull-right">
-                <h3>All posts in "{{ category.name }}"</h3>
+                <h3>All posts tagged with "{{ tag.name }}"</h3>
                 {% if posts %}
                     {% for post in posts %}
                         <h4><a href="{{ url_for('individual_post', post_slug=post.slug)}}">{{ post.title }}</a></h4>
@@ -28,7 +28,7 @@
                             {% endif %}
                     {% endfor %}
                 {% else %}
-                    There are no posts in {{ category.name }}.
+                    There are no posts tagged with "{{ tag.name }}".
                 {% endif %}
             </div>
 
