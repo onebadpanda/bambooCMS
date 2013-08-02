@@ -7,10 +7,11 @@ from obp import db
 from obp.constants import user as USER
 from obp.constants import post as POST
 from obp.forms.admin import categories, tags, posts, users
-from obp.forms.admin import UserNew, UserEdit, PostNew, PostEdit
+from obp.forms.admin import UserNew, UserEdit, PostNew, PostEdit, CategoryForm, TagForm
 from obp.helpers.decorators import admin_required
 from obp.models.User import User
 from obp.models.Post import Post
+from obp.models.Category import Category
 from obp.models.Tag import Tag
 
 
@@ -91,6 +92,15 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
 
+def delete_category(category_id):
+    category = Category.query.filter_by(id=category_id).first()
+    db.session.delete(category)
+    db.session.commit()
+
+def delete_tag(tag_id):
+    tag = Tag.query.filter_by(id=tag_id).first()
+    db.session.delete(tag)
+    db.session.commit()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -295,88 +305,75 @@ def post_edit(post_id):
 @admin.route('/category/', methods=["GET", "POST"])
 @login_required
 def category_index():
-    if current_user.role is not USER.ADMIN:
-        posts = Post.query.filter_by(user_id=current_user.id).all()
-    else:
-        posts = Post.query.all()
-    post_ids = request.form.getlist("multi-action")
+    categories = Category.query.all()
+    cat_ids = request.form.getlist("multi-action")
 
     if request.method == 'POST':
         action = request.form['action']
-        for post_id in post_ids:
-            post = Post.query.filter_by(id=post_id).first()
+        for cat_id in cat_ids:
+            category = Category.query.filter_by(id=cat_id).first()
             if action == "delete":
-                delete_post(post.id)
-                flash("Deleted post \"%s\"" % post.title, category="success")
-            if action == "pend":
-                pend_post(post.id)
-                flash("Pended post \"%s\"" % post.title, category="success")
-            if action == "publish":
-                publish_post(post.id)
-                flash("Published post \"%s\"" % post.title, category="success")
-        return redirect(url_for('admin.post_index'))
-    return render_template('admin/post_index.html',
-                           posts=posts,
-                           post_status=POST.STATUS,
-                           categories=categories()
+                delete_category(category.id)
+                flash("Deleted category \"%s\"" % category.name, category="success")
+        return redirect(url_for('admin.category_index'))
+    return render_template('admin/category_index.html',
+                           categories=categories,
                            )
 
 
 @admin.route('/category/add', methods=["GET", "POST"])
 @login_required
 def category_add():
-    form = PostNew()
+    form = CategoryForm()
     if form.validate_on_submit():
-        if form.status.data == POST.PUBLISHED:
-            pub_date = datetime.utcnow()
-        else:
-            pub_date = None
-        post = Post(user_id=current_user.id,
-                    title=form.title.data,
-                    body=form.body.data,
-                    category_id=form.category_id.data,
-                    create_date=datetime.utcnow(),
-                    pub_date=pub_date,
-                    status=form.status.data)
-        db.session.add(post)
+        category = Category(name=form.name.data)
+        db.session.add(category)
         db.session.commit()
 
-        flash('Post %s added' % post.title)
-        return redirect(url_for('admin.post_index'))
+        flash('Category %s added' % category.name, category="success")
+        return redirect(url_for('admin.category_index'))
     return render_template('admin/edit.html',
                            form=form,
                            action="New",
-                           data_type="Post",
+                           data_type="Category",
                            button_text="Save",
+                           )
+
+
+@admin.route('/category/edit/<int:category_id>/', methods=["GET", "POST"])
+@login_required
+def category_edit(category_id):
+    category = Category.query.filter_by(id=category_id).first()
+    form = CategoryForm(request.form, obj=category)
+    if form.validate_on_submit():
+        form.populate_obj(category)
+        db.session.commit()
+        flash("Category: \"%s\"  updated" % category.name, category="success")
+        return redirect(url_for('admin.category_index'))
+    return render_template('admin/edit.html',
+                           form=form,
+                           action="Edit",
+                           data_type="Post",
+                           button_text="Update",
                            )
 
 
 @admin.route('/tags/', methods=["GET", "POST"])
 @login_required
 def tag_index():
-    if current_user.role is not USER.ADMIN:
-        posts = Post.query.filter_by(user_id=current_user.id).all()
-    else:
-        posts = Post.query.all()
-    post_ids = request.form.getlist("multi-action")
+    tags = Tag.query.all()
+    tag_ids = request.form.getlist("multi-action")
 
     if request.method == 'POST':
         action = request.form['action']
-        for post_id in post_ids:
-            post = Post.query.filter_by(id=post_id).first()
+        for tag_id in tag_ids:
+            tag = Tag.query.filter_by(id=tag_id).first()
             if action == "delete":
-                delete_post(post.id)
-                flash("Deleted post \"%s\"" % post.title, category="success")
-            if action == "pend":
-                pend_post(post.id)
-                flash("Pended post \"%s\"" % post.title, category="success")
-            if action == "publish":
-                publish_post(post.id)
-                flash("Published post \"%s\"" % post.title, category="success")
-        return redirect(url_for('admin.post_index'))
-    return render_template('admin/post_index.html',
-                           posts=posts,
-                           post_status=POST.STATUS,
+                delete_tag(tag.id)
+                flash("Deleted tag \"%s\"" % tag.title, category="success")
+        return redirect(url_for('admin.tag_index'))
+    return render_template('admin/tag_index.html',
+                           tags=tags,
                            categories=categories()
                            )
 
@@ -384,27 +381,35 @@ def tag_index():
 @admin.route('/tags/add', methods=["GET", "POST"])
 @login_required
 def tag_add():
-    form = PostNew()
+    form = TagForm()
     if form.validate_on_submit():
-        if form.status.data == POST.PUBLISHED:
-            pub_date = datetime.utcnow()
-        else:
-            pub_date = None
-        post = Post(user_id=current_user.id,
-                    title=form.title.data,
-                    body=form.body.data,
-                    category_id=form.category_id.data,
-                    create_date=datetime.utcnow(),
-                    pub_date=pub_date,
-                    status=form.status.data)
-        db.session.add(post)
+        tag = Tag(name=form.name.data)
+        db.session.add(tag)
         db.session.commit()
 
-        flash('Post %s added' % post.title)
-        return redirect(url_for('admin.post_index'))
+        flash('Tag %s added' % tag.name)
+        return redirect(url_for('admin.tag_index'))
     return render_template('admin/edit.html',
                            form=form,
                            action="New",
-                           data_type="Post",
+                           data_type="Tag",
                            button_text="Save",
+                           )
+
+
+@admin.route('/tag/edit/<int:tag_id>/', methods=["GET", "POST"])
+@login_required
+def tag_edit(tag_id):
+    tag = Tag.query.filter_by(id=tag_id).first()
+    form = TagForm(request.form, obj=tag)
+    if form.validate_on_submit():
+        form.populate_obj(tag)
+        db.session.commit()
+        flash("Tag: \"%s\"  updated" % tag.name, category="success")
+        return redirect(url_for('admin.tag_index'))
+    return render_template('admin/edit.html',
+                           form=form,
+                           action="Edit",
+                           data_type="Tag",
+                           button_text="Update",
                            )

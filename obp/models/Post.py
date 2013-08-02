@@ -38,7 +38,7 @@ class Post(db.Model):
             status = POST.DRAFT
         self.status = status
         slug=slugify(title, max_length=40, word_boundary=True)
-        if Post.query.filter_by(slug=slug).all:
+        if Post.query.filter_by(slug=slug).all():
             length = len(Post.query.filter(Post.slug.like("%"+slug+"%")).all())
             self.slug = "%s-%i"%(slug, length+1)
         else:

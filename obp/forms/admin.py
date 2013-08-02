@@ -74,9 +74,9 @@ class PostEdit(PostForm):
     status = SelectField('status', choices=POST_STATUS.items(), coerce=int)
 
 
-class CategoryNew(Form):
+class CategoryForm(Form):
     name = TextField('name',[Required()])
 
 
-class TagNew(Form):
+class TagForm(Form):
     name = TextField('name',[Required()])

@@ -17,7 +17,7 @@ class Tag(db.Model):
     def __init__(self, name, slug=None):
         self.name = name
         slug=slugify(name, max_length=40, word_boundary=True)
-        if Tag.query.filter_by(slug=slug).all:
+        if Tag.query.filter_by(slug=slug).all():
             length = len(Tag.query.filter(Tag.slug.like("%"+slug+"%")).all())
             self.slug = "%s-%i"%(slug, length+1)
         else:
