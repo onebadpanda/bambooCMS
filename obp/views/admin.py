@@ -285,13 +285,20 @@ def post_add():
 @login_required
 def post_edit(post_id):
     post = Post.query.filter_by(id=post_id).first()
+
     form = PostEdit(request.form, obj=post)
+    form.tags.data = [tag.id for tag in post.tags]
+
     if form.validate_on_submit():
+
         form.populate_obj(post)
         if form.status.data is not POST.PUBLISHED:
             post.pub_date = None
         else:
             post.pub_date = datetime.utcnow()
+        for tag in form.tags.data:
+            tag = Tag.query.filter_by(id=tag).first()
+            post.tags.append(tag)
         db.session.commit()
         flash("Post: \"%s\"  updated" % post.title, category="success")
         return redirect(url_for('admin.post_index'))

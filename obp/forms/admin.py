@@ -70,7 +70,7 @@ class PostNew(PostForm):
 
 class PostEdit(PostForm):
     user_id = SelectField('author', choices=users(), coerce=int)
-    #tags = SelectField('tags', choices=tags().items(),coerce=int)
+    tags = MultiCheckboxField(choices=tags(),coerce=int)
     status = SelectField('status', choices=POST_STATUS.items(), coerce=int)
 
 
