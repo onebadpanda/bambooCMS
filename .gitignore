@@ -39,3 +39,4 @@ nosetests.xml
 # Other Random stuff
 # .DS_Store
 *.jar
+*.sql
